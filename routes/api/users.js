@@ -43,11 +43,11 @@ router.post('/',
     
     try {
 
-      //assigns matching query criteria to user
+      //assigns matching query criteria to user using mongoose method findOne()
       let user = await User.findOne({email});
       
       if (user) {
-        res.status(400).json({errors: [{msg: 'User already exists.'}]});
+        return res.status(400).json({errors: [{msg: 'User already exists.'}]});
       }
 
       //get users gravatar
@@ -74,8 +74,6 @@ router.post('/',
       await user.save();
 
       //return jsonwebtoken
-
-
       // Send a response back to the client
       res.send('User registered');
 
