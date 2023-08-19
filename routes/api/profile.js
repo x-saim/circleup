@@ -35,13 +35,14 @@ router.post('/', [
     check('skills','Skills are required').not().isEmpty()
   ]],
 async(req, res) => {
-
+  // Extract validation errors, if any
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
     return res.status(400).json({errors: errors.array()});
   }
 
+  // Destructure data from the request body
   const {
     company,
     website,
@@ -57,8 +58,7 @@ async(req, res) => {
     linkedin
   } = req.body;
 
-  //Build Profile Obj
-
+  // Build Profile Object
   const profileFields = {};
   profileFields.user = req.user.id;
   if (company) profileFields.company = company;
@@ -85,8 +85,7 @@ async(req, res) => {
     let profile = await Profile.findOne({user: req.user.id});
 
     if (profile) {
-      //Update
-
+      // Update existing profile
       profile = await Profile.findOneAndUpdate(
         {user: req.user.id},
         {$set: profileFields},
@@ -95,6 +94,11 @@ async(req, res) => {
 
       return res.json(profile);
     }
+
+    // Create new profile
+    profile = new Profile(profileFields);
+    await profile.save();
+    res.json(profile);
     
   } catch (err) {
     console.error(err.message);
