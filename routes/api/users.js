@@ -15,6 +15,7 @@ const User = require('../../models/User.js');
 // @desc    Register User
 // @access  Public
 
+// Registering a user
 router.post('/',
   [
     // Validation middleware for 'name' field
@@ -45,21 +46,21 @@ router.post('/',
     
     try {
 
-      //assigns matching query criteria to user using mongoose method findOne()
+      // Check if the user already exists in the database
       let user = await User.findOne({email});
       
       if (user) {
         return res.status(400).json({errors: [{msg: 'User already exists.'}]});
       }
 
-      //get users gravatar
+      // Get user's Gravatar image
       const avatar = gravatar.url(email, {
         s: '200',  //default size
         r: 'pg', //rating
         d: 'mm' //default image
       });
 
-      //create instance of user, this does not save the user yet. We want to save the user after encryption of password.
+      // Create a new user instance
       user = new User({
         name,
         email,
@@ -67,16 +68,16 @@ router.post('/',
         password
       });
 
-      // Encrypt password
-      // Generate a salt
+      // Encrypt the user's password
       const salt = await bcrypt.genSalt(10);
       
       user.password = await bcrypt.hash(password, salt);
-
+      
+      // Save the user in the database
       await user.save();
 
 
-      // Create a payload containing user information
+      // Create a JWT payload containing user information
       const payload = {
         user: {
           id: user.id
@@ -97,10 +98,6 @@ router.post('/',
       console.error(err.message);
       res.status(500).send('Server error');
     }
-
-  
-
-
   });
 
 module.exports = router;
