@@ -8,7 +8,7 @@ const User = require('../../models/User');
 const Profile = require('../../models/Profile');
 const Post = require('../../models/Post');
 
-// @route   POST api/post
+// @route   POST api/posts
 // @desc    Create a post
 // @access  Private
 
@@ -49,5 +49,25 @@ router.post('/',
     }
 
   });
+
+// @route   GET api/posts
+// @desc    Get all posts
+// @access  Private
+
+router.get('/', auth, async (req, res) => {
+
+  try {
+    //sorted by most recent post
+    const posts = await Post.find().sort({ date: -1 });
+
+    res.json(posts);
+
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error.');
+  }
+
+})
 
 module.exports = router;
