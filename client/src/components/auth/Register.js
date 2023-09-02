@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 //import axios from 'axios';
 
-export const Register = () => {
+const Register = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -102,3 +102,5 @@ export const Register = () => {
     </>
   );
 };
+
+export default Register;
